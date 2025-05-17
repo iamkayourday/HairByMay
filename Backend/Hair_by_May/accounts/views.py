@@ -47,12 +47,12 @@ class RegisterView(generics.CreateAPIView):
         """ Generates and sends email verification link """
         token = default_token_generator.make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
-        verification_url = f"http://your-frontend.com/verify-email/{uid}/{token}"
+        verification_url = f"http://localhost:5173/verify-email/{uid}/{token}"
 
         send_mail(
             'Verify your email',
             f'Click the link below to verify your email:\n{verification_url}',
-            'your-email@gmail.com',
+            'abdulbasitkayode3@gmail.com',
             [user.email],
             fail_silently=False,
         )

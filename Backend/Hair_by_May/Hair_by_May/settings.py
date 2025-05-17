@@ -60,6 +60,7 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://hairbymay.co.uk",
 ]
 AUTH_USER_MODEL = 'accounts.CustomUser'
 
@@ -75,9 +76,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'  # Replace with your email provider
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'your-email@gmail.com'
-EMAIL_HOST_PASSWORD = 'your-email-password'
-DEFAULT_FROM_EMAIL = 'HairByMay Support <your-email@gmail.com>'
+EMAIL_HOST_USER = 'abdulbasitkayode3@gmail.com'
+EMAIL_HOST_PASSWORD = 'ryftpwdtgwgvisde'
+DEFAULT_FROM_EMAIL = 'HairByMay Support <abdulbasitkayode3@gmail.com>'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
