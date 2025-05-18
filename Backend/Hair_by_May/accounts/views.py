@@ -222,3 +222,16 @@ class PasswordResetConfirmView(APIView):
 
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             return Response({"error": "Invalid token or user not found"}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]  # Only allow logged-in users
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "role": "admin" if user.is_staff else "user"
+        })
