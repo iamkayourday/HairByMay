@@ -11,7 +11,9 @@ from django.utils.encoding import force_bytes
 from django.urls import reverse
 from .serializers import RegisterSerializer, LoginSerializer, UserSerializer
 
+
 User = get_user_model()
+
 
 # ✅ RegisterView: Handles user registration & sends email verification
 class RegisterView(generics.CreateAPIView):
@@ -19,43 +21,22 @@ class RegisterView(generics.CreateAPIView):
     permission_classes = []
 
     def create(self, request, *args, **kwargs):
-        """
-        - Validates incoming registration data
-        - Creates a new user in the database
-        - Sends email verification link
-        - Returns user details + authentication tokens
-        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         user = serializer.save()
-        user.is_active = False  # ✅ Ensure user remains inactive until email verification
+        user.is_active = True  # ✅ Immediately activate user
         user.save()
-
-        self.send_verification_email(user)  # ✅ Send verification email after saving user
 
         refresh = RefreshToken.for_user(user)
 
         return Response({
             'user': UserSerializer(user).data,
-            'message': "Check your email for verification before logging in.",
             'refresh': str(refresh),
             'access': str(refresh.access_token)
         }, status=status.HTTP_201_CREATED)
 
-    def send_verification_email(self, user):
-        """ Generates and sends email verification link """
-        token = default_token_generator.make_token(user)
-        uid = urlsafe_base64_encode(force_bytes(user.pk))
-        verification_url = f"http://localhost:5173/verify-email/{uid}/{token}"
 
-        send_mail(
-            'Verify your email',
-            f'Click the link below to verify your email:\n{verification_url}',
-            'abdulbasitkayode3@gmail.com',
-            [user.email],
-            fail_silently=False,
-        )
 
 # ✅ VerifyEmailView: Handles email verification
 class VerifyEmailView(APIView):
@@ -81,31 +62,28 @@ class VerifyEmailView(APIView):
 
         return Response({"error": "Invalid or expired token"}, status=400)
 
+
+
 # ✅ LoginView: Handles user authentication & prevents unverified users from logging in
 class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
     permission_classes = [AllowAny]
 
     def post(self, request, *args, **kwargs):
-        """
-        - Validates login credentials
-        - Blocks unverified users from logging in
-        - Returns JWT tokens upon successful authentication
-        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        user = serializer.validated_data
-
-        if not user.is_active:  # ✅ Prevent unverified users from logging in
-            return Response({"error": "Email verification required before login."}, status=status.HTTP_401_UNAUTHORIZED)
-
+        user = serializer.validated_data  # Validated user from LoginSerializer
+        
         refresh = RefreshToken.for_user(user)
+
         return Response({
             'user': UserSerializer(user).data,
             'access': str(refresh.access_token),
             'refresh': str(refresh)
         }, status=status.HTTP_200_OK)
+
+
 
 # ✅ LogoutView: Logs out user by blacklisting their refresh token
 class LogoutView(APIView):
@@ -129,6 +107,8 @@ class LogoutView(APIView):
         except Exception as e:
             return Response({'error': 'Token blacklisting failed'}, status=status.HTTP_400_BAD_REQUEST)
 
+
+
 # ✅ ProfileView: Allows authenticated users to retrieve & update their own profile
 class ProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
@@ -140,6 +120,7 @@ class ProfileView(generics.RetrieveUpdateAPIView):
         - Allows users to update their own profile
         """
         return self.request.user
+
 
 # ✅ RefreshTokenView: Handles refreshing JWT access token
 class RefreshTokenView(APIView):
@@ -164,6 +145,8 @@ class RefreshTokenView(APIView):
         except Exception as e:
             return Response({'error': 'Invalid or expired refresh token'}, status=status.HTTP_401_UNAUTHORIZED)
 
+
+
 # ✅ PasswordResetRequestView: Handles user password reset requests via email
 class PasswordResetRequestView(APIView):
     permission_classes = [AllowAny]
@@ -181,7 +164,7 @@ class PasswordResetRequestView(APIView):
             user = User.objects.get(email=email)
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            reset_link = f"http://your-frontend.com/reset-password/{uid}/{token}"
+            reset_link = f"http://localhost:3000/reset-password/{uid}/{token}"
 
             send_mail(
                 "Password Reset Request",
@@ -195,6 +178,8 @@ class PasswordResetRequestView(APIView):
 
         except User.DoesNotExist:
             return Response({"error": "User with this email does not exist."}, status=status.HTTP_404_NOT_FOUND)
+
+
 
 # ✅ PasswordResetConfirmView: Handles password reset confirmation and updates user's password
 class PasswordResetConfirmView(APIView):
@@ -222,16 +207,3 @@ class PasswordResetConfirmView(APIView):
 
         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             return Response({"error": "Invalid token or user not found"}, status=status.HTTP_400_BAD_REQUEST)
-        
-
-class UserProfileView(APIView):
-    permission_classes = [IsAuthenticated]  # Only allow logged-in users
-
-    def get(self, request):
-        user = request.user
-        return Response({
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "role": "admin" if user.is_staff else "user"
-        })
