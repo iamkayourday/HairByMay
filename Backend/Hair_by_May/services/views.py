@@ -123,7 +123,7 @@ class BookingUpdateView(UpdateAPIView):
         if self.request.user.is_staff:
             return Booking.objects.all()  # Admins can update any booking
         return Booking.objects.filter(user=self.request.user)  # Users update only their own bookings
-    def perform_create(self, serializer):
+    def perform_update(self, serializer):
         if self.request.user.is_authenticated:
             serializer.save(user=self.request.user)
         else:
@@ -150,10 +150,18 @@ class BookingDetailView(RetrieveAPIView):
     serializer_class = BookingSerializer
     permission_classes = [AllowAny]   
 
+# class BookingUserListView(ListAPIView):
+#     serializer_class = BookingSerializer
+#     permission_classes = [IsAuthenticated]  
+
+#     def get_queryset(self):
+#         user = self.request.user
+#         return Booking.objects.filter(user=user)  
+    
+
 class BookingUserListView(ListAPIView):
     serializer_class = BookingSerializer
     permission_classes = [IsAuthenticated]  
 
     def get_queryset(self):
-        user = self.request.user
-        return Booking.objects.filter(user=user)  
+        return Booking.objects.filter(user=self.request.user)  # Restrict to logged-in user's bookings

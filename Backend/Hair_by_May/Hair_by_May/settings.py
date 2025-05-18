@@ -56,13 +56,21 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-]
+     "django.middleware.csrf.CsrfViewMiddleware",
+]   
+   
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://hairbymay.co.uk",
 ]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173",
+    "http://hairbymay.co.uk",
+]
 AUTH_USER_MODEL = 'accounts.CustomUser'
+
 
 REST_FRAMEWORK = {
 

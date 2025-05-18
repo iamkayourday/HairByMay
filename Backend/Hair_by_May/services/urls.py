@@ -41,3 +41,4 @@ urlpatterns = [
     path('bookings/user/', BookingUserListView.as_view(), name='booking-user-list'),
     path('bookings/cancel/<uuid:pk>/', BookingCancelView.as_view(), name='booking-cancel'),
 ]
+
