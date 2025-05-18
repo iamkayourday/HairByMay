@@ -50,18 +50,18 @@ const Login = () => {
       });
 
       // Optional: Store in localStorage for quick access
-      localStorage.setItem("accessToken", response.data.access);
+      // localStorage.setItem("accessToken", response.data.access);
 
       // Redirect to protected route
       navigate("/profile");
     } catch (error) {
       console.error("Login error:", error);
-
+      
       if (error.response) {
         setError(
           error.response.data.error ||
-            error.response.data.detail ||
-            "Invalid credentials"
+          error.response.data.detail ||
+          "Invalid credentials"
         );
       } else if (error.request) {
         setError("No response from server");
@@ -77,7 +77,7 @@ const Login = () => {
     <div className="login-container">
       <h1>Login</h1>
       {error && <div className="error-message">{error}</div>}
-
+      
       <form onSubmit={handleLogin}>
         <div className="form-group">
           <label htmlFor="username">Username</label>
@@ -108,15 +108,18 @@ const Login = () => {
         <button type="submit" disabled={loading}>
           {loading ? "Logging in..." : "Login"}
         </button>
-
-        <div className="login-container">
-          {error && <div className="error-message">{error}</div>}
-
-          <div className="forgot-password-link">
-            <a href="/password_reset">Forgot password?</a>
-          </div>
-        </div>
       </form>
+
+      <div className="login-container">
+    {error && <div className="error-message">{error}</div>}
+    
+    
+      
+      <div className="forgot-password-link">
+        <a href="/password_reset">Forgot password?</a>
+      </div>
+   
+  </div>
     </div>
   );
 };

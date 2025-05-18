@@ -20,6 +20,7 @@ const PasswordResetRequest = () => {
       setSuccess("Password reset link sent to your email");
       setTimeout(() => navigate("/login"), 3000);
     } catch (error) {
+      console.log("Error sending password reset link:", error);
       setError(
         error.response?.data?.email?.[0] || 
         "Error sending reset link. Please try again."
