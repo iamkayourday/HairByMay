@@ -1,48 +1,39 @@
-import React from "react";
-import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
-
+import { Link } from "react-router-dom";
+Link
 const Header = () => {
-  // Check if user is logged in (based on access token)
   const isLoggedIn = Cookies.get("accessToken");
+  const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
 
   return (
     <header className="bg-blue-600 text-white p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
-        {/* Logo */}
-        <Link to="/" className="text-xl font-bold">
-          MyApp
-        </Link>
-
-        {/* Navigation Links */}
+        <Link to="/" className="text-xl font-bold">MyApp</Link>
         <nav>
           <ul className="flex space-x-4">
             {isLoggedIn ? (
-              <>
-                <li>
-                  <Link to="/profile" className="hover:underline">Profile</Link>
-                </li>
-                <li>
-                  <Link to="/services" className="hover:underline">Services</Link>
-                </li>
-                <li>
-                  <Link to="/login" className="hover:underline">Login</Link>
-                </li>
-              </>
+              user?.is_superuser ? (
+                // ✅ Superuser Links
+                <>
+                  <li><Link to="/admin-dashboard" className="hover:underline">Admin Dashboard</Link></li>
+                  <li><Link to="/manage-users" className="hover:underline">Manage Users</Link></li>
+                  <li><Link to="/logout" className="hover:underline">Logout</Link></li>
+                </>
+              ) : (
+                // ✅ Normal User Links
+                <>
+                  <li><Link to="/profile" className="hover:underline">Profile</Link></li>
+                  <li><Link to="/services" className="hover:underline">Services</Link></li>
+                  <li><Link to="/logout" className="hover:underline">Logout</Link></li>
+                </>
+              )
             ) : (
+              // ✅ Guest Links (Before Login)
               <>
-                <li>
-                  <Link to="/" className="hover:underline">Home</Link>
-                </li>
-                <li>
-                  <Link to="/services" className="hover:underline">Services</Link>
-                </li>
-                <li>
-                  <Link to="/login" className="hover:underline">Login</Link>
-                </li>
-                <li>
-                  <Link to="/register" className="hover:underline">Register</Link>
-                </li>
+                <li><Link to="/" className="hover:underline">Home</Link></li>
+                <li><Link to="/services" className="hover:underline">Services</Link></li>
+                <li><Link to="/login" className="hover:underline">Login</Link></li>
+                <li><Link to="/register" className="hover:underline">Register</Link></li>
               </>
             )}
           </ul>

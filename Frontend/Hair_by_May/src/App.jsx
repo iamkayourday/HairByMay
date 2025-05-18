@@ -13,6 +13,7 @@ import ServiceDetails from "./Pages/ServiceDetails";
 import ProtectedRoute from "./Routes/ProtectedRoutes"; // Import from separate file
 import AuthRoute from "./Routes/AuthRoutes"; // Import from separate file
 
+
 const App = () => {
   return (
     <Router>

@@ -10,16 +10,18 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Check for existing token and redirect if logged in
+  // Redirect logged-in users based on their role
   useEffect(() => {
     const token = Cookies.get("accessToken");
+    const user = Cookies.get("user") ? JSON.parse(Cookies.get("user")) : null;
+
     if (token) {
-      navigate("/profile");
+      user?.is_superuser ? navigate("/admin-dashboard") : navigate("/profile");
     }
   }, [navigate]);
 
   const handleLogin = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
     setLoading(true);
     setError("");
 
@@ -27,47 +29,25 @@ const Login = () => {
       const response = await axios.post(
         "http://localhost:8000/api/accounts/login/",
         { username, password },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+        { headers: { "Content-Type": "application/json" } }
       );
+
+      const userData = response.data.user;
 
       // Store tokens securely
       Cookies.set("accessToken", response.data.access, {
-        expires: 1, // 1 day (adjust as needed)
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
+        expires: 1, secure: process.env.NODE_ENV === "production", sameSite: "strict", path: "/",
       });
-
       Cookies.set("refreshToken", response.data.refresh, {
-        expires: 7, // 7 days
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
+        expires: 7, secure: process.env.NODE_ENV === "production", sameSite: "strict", path: "/",
       });
+      Cookies.set("user", JSON.stringify(userData), { expires: 1, path: "/" }); // ✅ Store user data
 
-      // Optional: Store in localStorage for quick access
-      // localStorage.setItem("accessToken", response.data.access);
-
-      // Redirect to protected route
-      navigate("/profile");
+      // Redirect based on user role
+      userData.is_superuser ? navigate("/admin-dashboard") : navigate("/profile");
     } catch (error) {
       console.error("Login error:", error);
-      
-      if (error.response) {
-        setError(
-          error.response.data.error ||
-          error.response.data.detail ||
-          "Invalid credentials"
-        );
-      } else if (error.request) {
-        setError("No response from server");
-      } else {
-        setError("Login failed: " + error.message);
-      }
+      setError(error.response?.data?.error || "Invalid credentials");
     } finally {
       setLoading(false);
     }
@@ -110,16 +90,9 @@ const Login = () => {
         </button>
       </form>
 
-      <div className="login-container">
-    {error && <div className="error-message">{error}</div>}
-    
-    
-      
       <div className="forgot-password-link">
         <a href="/password_reset">Forgot password?</a>
       </div>
-   
-  </div>
     </div>
   );
 };
