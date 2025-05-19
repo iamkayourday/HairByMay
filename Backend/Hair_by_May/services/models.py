@@ -57,3 +57,16 @@ class Booking(models.Model):
 
     def __str__(self):
         return f"Booking for {self.full_name} - {self.service.title}"
+
+# Contact Submission model to handle user inquiries
+class ContactSubmission(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=200)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_resolved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Contact from {self.name} ({self.email})"

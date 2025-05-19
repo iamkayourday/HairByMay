@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Service, Category, AppointmentOption, Booking
+from .models import Service, Category, AppointmentOption, Booking, ContactSubmission
 
 class AppointmentOptionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -50,3 +50,19 @@ class BookingSerializer(serializers.ModelSerializer):
         base_price = obj.service.price  # Base price from service
         extra_cost = sum(option.extra_cost for option in obj.selected_options.all())  # Fix reference
         return base_price + extra_cost  # Calculate total price correctly
+    
+# class ContactSubmissionSerializer(serializers.ModelSerializer):
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactSubmission
+        fields = ['name', 'email', 'phone', 'message']
+        extra_kwargs = {
+            'message': {'required': True},
+            'email': {'required': True}
+        }
+
+    def validate_email(self, value):
+        """Basic email format validation"""
+        if not value or '@' not in value:
+            raise serializers.ValidationError("Enter a valid email address.")
+        return value.lower().strip()

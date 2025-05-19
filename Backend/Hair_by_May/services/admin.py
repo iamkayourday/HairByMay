@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Service, Category,AppointmentOption, Booking
+from .models import Service, Category,AppointmentOption, Booking, ContactSubmission
+
 
 
 # Register your models here.
@@ -28,8 +29,16 @@ class BookingAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     list_per_page = 10
 
+
+
+
+class ContactAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email', 'created_at', 'is_resolved')
+    search_fields = ('name', 'email')
+
 # Register your models here.
 admin.site.register(Service, ServiceAdmin)
 admin.site.register(Booking, BookingAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(AppointmentOption, AppointmentOptionAdmin)
+admin.site.register(ContactSubmission, ContactAdmin)

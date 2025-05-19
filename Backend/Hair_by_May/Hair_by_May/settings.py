@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,8 +28,18 @@ SECRET_KEY = 'django-insecure-zevx_)o77eo^mxc9!5djyvsdiqbn3aivja0^v$9yptn=)y+svs
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ['*']
+# Database configuration (Railway will provide this)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('PGDATABASE'),
+        'USER': os.getenv('PGUSER'),
+        'PASSWORD': os.getenv('PGPASSWORD'),
+        'HOST': os.getenv('PGHOST'),
+        'PORT': os.getenv('PGPORT'),
+    }
+}
 
 # Application definition
 
@@ -60,6 +71,13 @@ MIDDLEWARE = [
 ]   
    
 
+STRIPE_SECRET_KEY = 'sk_test_51QzWcy4eDpQZMl1RWRkIls1clfvCyizc2pHFSzlyGdbMBsimHOcYft6bZmxOcqdhgQ0YtXeFRPyL2XCy87kqGbKs00JByUV3X6'  # Get from Stripe Dashboard
+STRIPE_WEBHOOK_SECRET = 'your_webhook_secret'  # For payment confirmation
+STRIPE_SUCCESS_URL = 'http://localhost:5173/success'  # Redirect after payment
+STRIPE_CANCEL_URL = 'http://localhost:5173/cancel'  # Redirect after payment
+
+
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
@@ -80,13 +98,23 @@ REST_FRAMEWORK = {
    
 }
 
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'  # Replace with your email provider
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'abdulbasitkayode3@gmail.com'
+# EMAIL_HOST_PASSWORD = 'ryftpwdtgwgvisde'
+# DEFAULT_FROM_EMAIL = 'HairByMay Support <abdulbasitkayode3@gmail.com>'
+
+# Email Configuration (for Gmail example)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Replace with your email provider
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'abdulbasitkayode3@gmail.com'
-EMAIL_HOST_PASSWORD = 'ryftpwdtgwgvisde'
-DEFAULT_FROM_EMAIL = 'HairByMay Support <abdulbasitkayode3@gmail.com>'
+EMAIL_HOST_USER = 'abdulbasitkayode3@gmail.com'  # Your email
+EMAIL_HOST_PASSWORD = 'ryftpwdtgwgvisde'  # Generate in Gmail settings
+DEFAULT_FROM_EMAIL = 'abdulbasitkayode3@gmail.com'
+ADMIN_EMAIL = 'abdulbasitkayode3@gmail.com'
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),

@@ -4,12 +4,8 @@ from .views import (
     ServiceListView, ServiceDetailView, CategoryCreateView, CategoryUpdateView, CategoryDeleteView,
     CategoryListView, CategoryDetailView, AppointmentOptionCreateView, AppointmentOptionUpdateView, AppointmentOptionDeleteView,
     AppointmentOptionListView, AppointmentOptionDetailView, BookingCreateView, BookingUpdateView,
-    BookingListView, BookingDetailView, BookingUserListView, BookingCancelView
-
+    BookingListView, BookingDetailView, BookingUserListView, BookingCancelView, ContactCreateView, ContactListView, BookingPaymentView
 )
-
-
-
 
 urlpatterns = [
     # SERVICES URLS
@@ -40,5 +36,8 @@ urlpatterns = [
     path('bookings/update/<uuid:pk>/', BookingUpdateView.as_view(), name='booking-update'),
     path('bookings/user/', BookingUserListView.as_view(), name='booking-user-list'),
     path('bookings/cancel/<uuid:pk>/', BookingCancelView.as_view(), name='booking-cancel'),
+    path('contact/', ContactCreateView.as_view(), name='contact-submission'),
+    path('contact/list/', ContactListView.as_view(), name='contact-list'),
+    path('bookings/<uuid:booking_id>/pay/', BookingPaymentView.as_view()),
 ]
 
