@@ -71,10 +71,6 @@ MIDDLEWARE = [
 ]   
    
 
-STRIPE_SECRET_KEY = 'sk_test_51QzWcy4eDpQZMl1RWRkIls1clfvCyizc2pHFSzlyGdbMBsimHOcYft6bZmxOcqdhgQ0YtXeFRPyL2XCy87kqGbKs00JByUV3X6'  # Get from Stripe Dashboard
-STRIPE_WEBHOOK_SECRET = 'your_webhook_secret'  # For payment confirmation
-STRIPE_SUCCESS_URL = 'http://localhost:5173/success'  # Redirect after payment
-STRIPE_CANCEL_URL = 'http://localhost:5173/cancel'  # Redirect after payment
 
 
 
